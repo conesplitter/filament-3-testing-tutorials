@@ -55,6 +55,10 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
             return $this->is_admin && $this->hasVerifiedEmail();
         }
 
-        return $this->hasVerifiedEmail();
+        if ($panel->getId() === 'customer') {
+            return true;
+        }
+
+        return false;
     }
 }
