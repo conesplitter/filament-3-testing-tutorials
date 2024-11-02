@@ -19,7 +19,7 @@ it('does not allow guests to access the customer panel', function () {
 it('does not allow users with unverified emails to access the customer panel', function () {
     actingAs(User::factory()->unverified()->create())
         ->get('/customer')
-        ->assertForbidden();
+        ->assertRedirect(route('filament.customer.auth.email-verification.prompt'));
 });
 
 it('allows logged in users with a verified email to access the panel', function () {
