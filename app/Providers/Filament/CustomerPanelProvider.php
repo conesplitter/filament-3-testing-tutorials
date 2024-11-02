@@ -29,6 +29,8 @@ class CustomerPanelProvider extends PanelProvider
                 'primary' => Color::Amber,
             ])
             ->login()
+            ->registration()
+            ->emailVerification()
             ->discoverResources(in: app_path('Filament/Customer/Resources'), for: 'App\\Filament\\Customer\\Resources')
             ->discoverPages(in: app_path('Filament/Customer/Pages'), for: 'App\\Filament\\Customer\\Pages')
             ->pages([
