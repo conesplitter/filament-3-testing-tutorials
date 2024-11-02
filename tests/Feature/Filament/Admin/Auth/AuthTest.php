@@ -15,6 +15,12 @@ it('does not allow users with unverified emails to access the admin panel', func
         ->assertForbidden();
 });
 
+it('does not allow users with is_admin set to false to access the admin panel', function () {
+    actingAs(User::factory()->create(['is_admin' => false]))
+        ->get('/admin')
+        ->assertForbidden();
+});
+
 it('allows logged in users with a verified email to access the panel', function () {
     actingAs(User::factory()->create(['is_admin' => true]))
         ->get('/admin')
