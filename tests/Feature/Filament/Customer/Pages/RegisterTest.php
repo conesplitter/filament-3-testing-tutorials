@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Filament\Facades\Filament;
+use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Pages\Auth\Register;
 
 use function Pest\Laravel\actingAs;
@@ -13,6 +14,13 @@ beforeEach(function () {
     Filament::setCurrentPanel(
         Filament::getPanel('customer'),
     );
+
+    $this->formData = [
+        'name' => 'Test User',
+        'email' => 'test@email.com',
+        'password' => 'filament12345',
+        'passwordConfirmation' => 'filament12345',
+    ];
 });
 
 it('does not allow authenticated users access to the register page', function () {
@@ -23,12 +31,7 @@ it('does not allow authenticated users access to the register page', function ()
 
 it('it can register a user', function () {
     livewire(Register::class)
-        ->fillForm([
-            'name' => 'Test User',
-            'email' => 'test@email.com',
-            'password' => 'filament12345',
-            'passwordConfirmation' => 'filament12345',
-        ])
+        ->fillForm($this->formData)
         ->call('register')
         ->assertHasNoFormErrors();
 
@@ -42,4 +45,17 @@ it('it can register a user', function () {
     assertTrue(password_verify('filament12345', $user->password));
 
     assertEquals(auth()->id(), $user->id);
+});
+
+it('sends the filament email verification notification after registering', function () {
+    Notification::fake();
+
+    livewire(Register::class)
+        ->fillForm($this->formData)
+        ->call('register')
+        ->assertHasNoFormErrors();
+
+    $user = User::where('email', 'test@email.com')->firstOrFail();
+
+    Notification::assertSentTo($user, VerifyEmail::class);
 });
