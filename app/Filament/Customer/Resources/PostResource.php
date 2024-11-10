@@ -4,10 +4,15 @@ namespace App\Filament\Customer\Resources;
 
 use App\Filament\Customer\Resources\PostResource\Pages;
 use App\Models\Post;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Str;
 
 class PostResource extends Resource
 {
@@ -19,7 +24,19 @@ class PostResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Toggle::make('published_at')
+                    ->label('Publish')
+                    ->columnSpanFull(),
+                TextInput::make('title')
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                    ->required(),
+                TextInput::make('slug')
+                    ->disabled(! auth()->user()->is_admin)
+                    ->required(),
+                RichEditor::make('content')
+                    ->required()
+                    ->columnSpanFull(),
             ]);
     }
 
