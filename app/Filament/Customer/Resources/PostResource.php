@@ -4,6 +4,7 @@ namespace App\Filament\Customer\Resources;
 
 use App\Filament\Customer\Resources\PostResource\Pages;
 use App\Models\Post;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -42,6 +43,9 @@ class PostResource extends Resource
                 RichEditor::make('content')
                     ->required()
                     ->columnSpanFull(),
+                Repeater::make('tags')
+                    ->simple(TextInput::make('tag')
+                        ->required()),
             ]);
     }
 
