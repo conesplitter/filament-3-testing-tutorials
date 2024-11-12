@@ -4,6 +4,7 @@ use App\Filament\Customer\Resources\PostResource;
 use App\Filament\Customer\Resources\PostResource\Pages\CreatePost;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Toggle;
 
 use function Pest\Laravel\actingAs;
@@ -26,6 +27,7 @@ it('can render the page', function (): void {
 });
 
 it('can create a post', function (): void {
+    Repeater::fake();
 
     livewire(CreatePost::class)
         ->fillForm([
@@ -33,6 +35,7 @@ it('can create a post', function (): void {
             'slug' => 'my-first-post',
             'content' => 'This is my first post content',
             'published_at' => true,
+            'tags' => [],
         ])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -84,4 +87,27 @@ it('has the right label for the published_at', function () {
         ->assertFormFieldExists('published_at', function (Toggle $field): bool {
             return $field->getLabel() === 'Publish';
         });
+});
+
+it('can create a post with tags', function (): void {
+    Repeater::fake();
+
+    livewire(CreatePost::class)
+        ->fillForm([
+            'title' => 'My first post',
+            'slug' => 'my-first-post',
+            'content' => 'This is my first post content',
+            'published_at' => true,
+            'tags' => [
+                ['name' => 'tag1'],
+                ['name' => 'tag2'],
+            ],
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas('posts', [
+        'title' => 'My first post',
+        'tags' => json_encode(['tag1', 'tag2']),
+    ]);
 });
