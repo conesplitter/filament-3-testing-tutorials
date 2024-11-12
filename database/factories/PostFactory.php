@@ -25,6 +25,7 @@ class PostFactory extends Factory
             'title' => $title,
             'slug' => Str::slug($title),
             'content' => $this->faker->paragraph,
+            'tags' => $this->faker->words,
             'published_at' => $this->faker->dateTimeBetween('-1 week', '+1 week'),
         ];
     }
