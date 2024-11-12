@@ -29,10 +29,15 @@ class PostResource extends Resource
                     ->columnSpanFull(),
                 TextInput::make('title')
                     ->live(onBlur: true)
-                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                    ->afterStateUpdated(function (Set $set, ?string $state, string $operation) {
+                        if ($operation === 'create') {
+                            $set('slug', Str::slug($state));
+                        }
+                    })
                     ->required(),
                 TextInput::make('slug')
-                    ->disabled(! auth()->user()->is_admin)
+                    ->disabled(fn () => ! auth()->user()->is_admin)
+                    ->dehydrated()
                     ->required(),
                 RichEditor::make('content')
                     ->required()
