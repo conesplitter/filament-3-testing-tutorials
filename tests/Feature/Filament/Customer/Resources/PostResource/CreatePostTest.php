@@ -99,8 +99,8 @@ it('can create a post with tags', function (): void {
             'content' => 'This is my first post content',
             'published_at' => true,
             'tags' => [
-                ['name' => 'tag1'],
-                ['name' => 'tag2'],
+                ['tag' => 'tag1'],
+                ['tag' => 'tag2'],
             ],
         ])
         ->call('create')
