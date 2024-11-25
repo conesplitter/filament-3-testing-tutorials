@@ -4,6 +4,7 @@ namespace App\Filament\Customer\Resources;
 
 use App\Filament\Customer\Resources\PostResource\Pages;
 use App\Models\Post;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -46,6 +47,11 @@ class PostResource extends Resource
                 Repeater::make('tags')
                     ->simple(TextInput::make('tag')
                         ->required()),
+
+                FileUpload::make('thumbnail')
+                    ->directory('post-thumbnails')
+                    ->visibility('public')
+                    ->image(),
             ]);
     }
 
