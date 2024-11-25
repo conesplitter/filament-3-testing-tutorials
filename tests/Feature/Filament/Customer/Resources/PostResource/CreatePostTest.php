@@ -2,12 +2,15 @@
 
 use App\Filament\Customer\Resources\PostResource;
 use App\Filament\Customer\Resources\PostResource\Pages\CreatePost;
+use App\Models\Post;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Toggle;
+use Illuminate\Http\UploadedFile;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseEmpty;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
@@ -110,4 +113,48 @@ it('can create a post with tags', function (): void {
         'title' => 'My first post',
         'tags' => json_encode(['tag1', 'tag2']),
     ]);
+});
+
+it('can create a post with a thumbnail', function (): void {
+    Storage::fake('public');
+
+    assertDatabaseEmpty('posts');
+
+    $file = UploadedFile::fake()->image('thumbnail.jpg');
+
+    livewire(CreatePost::class)
+        ->fillForm([
+            'title' => 'My first post',
+            'slug' => 'my-first-post',
+            'content' => 'This is my first post content',
+            'published_at' => true,
+            'tags' => [],
+            'thumbnail' => $file,
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $post = Post::firstOrFail();
+
+    Storage::disk('public')->assertExists($post->thumbnail);
+});
+
+it('validates that the thumbnail is a image', function (): void {
+
+    $file = UploadedFile::fake()->create('thumbnail.pdf');
+
+    livewire(CreatePost::class)
+        ->fillForm([
+            'title' => 'My first post',
+            'slug' => 'my-first-post',
+            'content' => 'This is my first post content',
+            'published_at' => true,
+            'tags' => [],
+            'thumbnail' => $file,
+        ])
+        ->call('create')
+        ->assertHasFormErrors([
+            'thumbnail',
+        ]);
+
 });
