@@ -97,7 +97,6 @@ it('can update the post', function (): void {
     ])
         ->fillForm([
             'title' => 'Updated Title',
-            'slug' => 'updated-slug',
             'content' => 'Updated Content',
             'tags' => [
                 ['tag' => 'tag1'],
@@ -111,10 +110,9 @@ it('can update the post', function (): void {
 
     assertEquals([
         'title' => 'Updated Title',
-        'slug' => 'updated-slug',
         'content' => 'Updated Content',
         'tags' => ['tag1', 'tag2'],
-    ], $post->only(['title', 'slug', 'content', 'tags']));
+    ], $post->only(['title', 'content', 'tags']));
 });
 
 test("you can't update the slug", function (): void {
