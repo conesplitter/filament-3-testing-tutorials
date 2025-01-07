@@ -38,8 +38,8 @@ class PostResource extends Resource
                     })
                     ->required(),
                 TextInput::make('slug')
-                    ->disabled(fn () => ! auth()->user()->is_admin)
-                    ->dehydrated()
+                    ->disabled(fn (string $operation) => ! auth()->user()->is_admin || $operation === 'edit')
+                    ->dehydrated(fn (string $operation) => $operation === 'create')
                     ->required(),
                 RichEditor::make('content')
                     ->required()
